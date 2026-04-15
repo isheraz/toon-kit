@@ -1,6 +1,6 @@
 {
   "name": "tonpack",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Token-Oriented Object Notation (TOON) CLI — compress AI context storage by 30-90% across Claude, Gemini, agy, and Ollama.",
   "author": "Sheraz Ahmed <sherazahmed93@gmail.com>",
   "license": "MIT",
