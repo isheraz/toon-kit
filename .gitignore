@@ -44,6 +44,9 @@ coverage/
 # Local project memory
 .toon/
 
+# Claude Code project data
+.claude/
+
 # Local development
 local-config.json
 test-data/

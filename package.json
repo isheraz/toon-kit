@@ -17,11 +17,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sherazahmed93/toon-kit.git"
+    "url": "git+https://github.com/isheraz/toon-kit.git"
   },
-  "homepage": "https://github.com/sherazahmed93/toon-kit#readme",
+  "homepage": "https://github.com/isheraz/toon-kit#readme",
   "bugs": {
-    "url": "https://github.com/sherazahmed93/toon-kit/issues"
+    "url": "https://github.com/isheraz/toon-kit/issues"
   },
   "engines": {
     "node": ">=14.0.0"
