@@ -1,16 +1,16 @@
 ---
-name: toon-kit
+name: tonpack
 description: Token-Oriented Object Notation (TOON) CLI for compressing AI context storage. Use when the user asks about toon, token optimization, ton commands, or wants to reduce LLM context costs.
 ---
 
-# toon-kit — TOON Token Optimizer
+# tonpack — TOON Token Optimizer
 
 `ton` is a CLI tool that compresses AI memory and context files from JSON/Markdown to TOON format, reducing token consumption by 30–90%.
 
 ## Installation
 
 ```bash
-npm install -g toon-kit
+npm install -g tonpack
 exec zsh          # reload shell to activate ton alias
 ton setup         # configure Claude, Gemini, agy, Ollama
 ```

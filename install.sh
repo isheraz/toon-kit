@@ -82,7 +82,7 @@ full_install() {
   setup_shell_integration "$silent"
 
   if [ "$silent" = true ]; then
-    echo "toon-kit: installed and configured. Reload your shell: exec zsh"
+    echo "tonpack: installed and configured. Reload your shell: exec zsh"
   else
     echo -e "\n${GREEN}✓ Installation complete!${NC}\n"
     echo -e "${BLUE}Next steps:${NC}"
@@ -161,7 +161,7 @@ setup_shell_integration() {
 
   cat >> "$shell_rc" << 'RCEOF'
 
-# toon-kit — TOON token optimizer (https://github.com/sherazahmed93/toon-kit)
+# tonpack — TOON token optimizer (https://github.com/isheraz/tonpack)
 source "$HOME/.claude/toon-setup/shell-integration.sh" 2>/dev/null || true
 RCEOF
 

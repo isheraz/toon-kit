@@ -1,5 +1,5 @@
 {
-  "name": "@isheraz/toon-kit",
+  "name": "tonpack",
   "version": "1.0.2",
   "description": "Token-Oriented Object Notation (TOON) CLI — compress AI context storage by 30-90% across Claude, Gemini, agy, and Ollama.",
   "author": "Sheraz Ahmed <sherazahmed93@gmail.com>",
@@ -17,18 +17,18 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/isheraz/toon-kit.git"
+    "url": "git+https://github.com/isheraz/tonpack.git"
   },
-  "homepage": "https://github.com/isheraz/toon-kit#readme",
+  "homepage": "https://github.com/isheraz/tonpack#readme",
   "bugs": {
-    "url": "https://github.com/isheraz/toon-kit/issues"
+    "url": "https://github.com/isheraz/tonpack/issues"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "preferGlobal": true,
   "bin": {
-    "toon-kit": "ton"
+    "tonpack": "ton"
   },
   "files": [
     "ton",

@@ -1,22 +1,22 @@
-# @isheraz/toon-kit
+# tonpack
 
 > Compress AI context storage by 30–90% across Claude, Gemini, agy, and Ollama — automatically.
 
-[![npm version](https://img.shields.io/npm/v/@isheraz/toon-kit?color=cb3837&logo=npm)](https://www.npmjs.com/package/@isheraz/toon-kit)
-[![npm downloads](https://img.shields.io/npm/dm/@isheraz/toon-kit?color=cb3837)](https://www.npmjs.com/package/@isheraz/toon-kit)
+[![npm version](https://img.shields.io/npm/v/tonpack?color=cb3837&logo=npm)](https://www.npmjs.com/package/tonpack)
+[![npm downloads](https://img.shields.io/npm/dm/tonpack?color=cb3837)](https://www.npmjs.com/package/tonpack)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-isheraz%2Ftoon--kit-181717?logo=github)](https://github.com/isheraz/@isheraz/toon-kit)
+[![GitHub](https://img.shields.io/badge/GitHub-isheraz%2Ftonpack-181717?logo=github)](https://github.com/isheraz/tonpack)
 
-**@isheraz/toon-kit** installs the `ton` CLI and wires a silent hook into Claude Code that converts your AI memory files from verbose JSON/Markdown to [TOON format](https://github.com/toon-format/toon) — a compact, CSV-like notation designed for LLM input.
+**tonpack** installs the `ton` CLI and wires a silent hook into Claude Code that converts your AI memory files from verbose JSON/Markdown to [TOON format](https://github.com/toon-format/toon) — a compact, CSV-like notation designed for LLM input.
 
 ## Install
 
 ```bash
-npm install -g @isheraz/toon-kit
+npm install -g tonpack
 exec zsh               # reload shell to activate ton
 ```
 
-> **npm:** [npmjs.com/package/@isheraz/toon-kit](https://www.npmjs.com/package/@isheraz/toon-kit)
+> **npm:** [npmjs.com/package/tonpack](https://www.npmjs.com/package/tonpack)
 
 That's it. The `postinstall` script silently:
 - Copies files to `~/.claude/toon-setup/`
@@ -128,10 +128,10 @@ By File
 Drop `skill.md` into `~/.claude/skills/ton.md` — Claude will automatically understand the tool and suggest `ton` commands in relevant conversations.
 
 ```bash
-cp node_modules/@isheraz/toon-kit/skill.md ~/.claude/skills/ton.md
+cp node_modules/tonpack/skill.md ~/.claude/skills/ton.md
 ```
 
-This is done automatically by `npm install -g @isheraz/toon-kit`.
+This is done automatically by `npm install -g tonpack`.
 
 ## Integration with RTK
 
