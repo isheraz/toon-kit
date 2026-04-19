@@ -9,6 +9,7 @@ yarn-error.log*
 dist/
 build/
 *.tgz
+.history/
 
 # Environment variables
 .env
@@ -40,6 +41,12 @@ coverage/
 *.tmp
 *.temp
 /tmp/
+
+# ton serve runtime files (generated at ~/.claude/toon-context/)
+.ton-serve.pid
+ton-serve.log
+ton-serve.err
+errors.log
 
 # Local project memory
 .toon/

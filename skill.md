@@ -20,6 +20,9 @@ ton setup         # configure Claude, Gemini, agy, Ollama
 ```
 ton setup               Install + configure all AI tools
 ton verify              Check setup status
+ton serve               Start context broker server (usually auto-started)
+ton serve stop          Stop the context broker server
+ton serve status        Show server status, port, pid, file count
 ton init [dir]          Create .toon/memory/ in a project (default: cwd)
 ton convert [dir]       Convert memory files to TOON format
 ton watch               Auto-convert on file change

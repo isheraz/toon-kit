@@ -28,6 +28,7 @@ _usage() {
   echo -e "${D}Commands:${NC}"
   echo -e "  ${C}setup${NC}               Install dependencies and configure all AI tools"
   echo -e "  ${C}verify${NC}              Check setup status across all tools"
+  echo -e "  ${C}serve${NC}               Start context broker server ${D}(usually auto-started)${NC}"
   echo -e "  ${C}init${NC} [dir]          Create .toon/memory/ in project dir ${D}(default: cwd)${NC}"
   echo -e "  ${C}convert${NC} [dir]       Convert memory files to TOON format"
   echo -e "  ${C}watch${NC}               Watch memory dirs and auto-convert on change"
@@ -80,6 +81,27 @@ case "$cmd" in
     ;;
   run)
     node "$TOON_DIR/converter.js" "$@"
+    ;;
+  serve)
+    shift
+    case "${1:-start}" in
+      stop)
+        PID_FILE="$HOME/.claude/toon-context/.ton-serve.pid"
+        if [ -f "$PID_FILE" ]; then
+          kill "$(cat "$PID_FILE")" 2>/dev/null && echo "ton serve: stopped" || echo "ton serve: not running"
+          rm -f "$PID_FILE"
+        else
+          echo "ton serve: not running"
+        fi
+        ;;
+      status)
+        curl -s "http://127.0.0.1:${TOON_SERVE_PORT:-7878}/health" 2>/dev/null | node -e \
+          "try { const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); console.log('status: '+d.status+'\nport: '+d.port+'\npid: '+d.pid+'\nuptime: '+d.uptime+'s\nfiles: '+d.files); } catch { console.error('ton serve: not running'); process.exit(1); }" || true
+        ;;
+      *)
+        node "$TOON_DIR/toon-serve.js" "$@"
+        ;;
+    esac
     ;;
   help|--help|-h)
     _usage

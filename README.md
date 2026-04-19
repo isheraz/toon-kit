@@ -102,6 +102,83 @@ Claude Code session ends
         savings.log  →  ton stats
 ```
 
+## Context Broker Server
+
+`ton serve` is an HTTP context broker that reads compressed `.toon` files and decompresses them on-demand for any AI tool. It auto-starts via macOS launchd with a shell fallback, so **no manual server startup needed**.
+
+### Architecture
+
+```
+Write Path (Compression)          Read Path (Decompression)
+┌──────────────────────────┐      ┌───────────────────────────────┐
+│ Memory files (markdown)  │      │ ton serve (localhost:7878)    │
+│ with YAML frontmatter    │      │                               │
+└─────────┬────────────────┘      │  GET /health  → status, pid   │
+          │                       │  GET /context → all contexts  │
+          ▼                       │  GET /context/:name → one     │
+    Stop hook fires               └────────┬──────────────────────┘
+          │                               │
+          ▼                       ┌───────┴─────────┐
+    md-to-toon                    │                 │
+    (fixed YAML)         ┌────────▼────────┐  ┌────▼─────────┐
+          │              │  Claude Code    │  │ Gemini/agy   │
+          ▼              │  (contextStorage│  │ Ollama       │
+    .toon files   ◄──────┤   format:toon)  │  │ (HTTP fetch) │
+          │              └─────────────────┘  └─────────────┘
+          ▼
+    TOONConverter.toonToJson()
+          │
+          ▼
+    ~/. claude/toon-context/
+```
+
+### API Endpoints
+
+```bash
+# Health check — returns status, uptime, file count
+curl http://localhost:7878/health
+
+# Get all contexts as JSON
+curl http://localhost:7878/context
+
+# Get one context by name
+curl http://localhost:7878/context/project_status
+```
+
+### Auto-Start
+
+The server auto-starts on login via:
+
+1. **launchd (macOS)** — plist at `~/Library/LaunchAgents/com.tonpack.serve.plist`
+   - Fires on login (`RunAtLoad: true`)
+   - Auto-restarts if crashes (`KeepAlive: true`)
+   - Survives reboots
+
+2. **Shell fallback** — lazy-start in `shell-integration.sh`
+   - Checks if server running on new shell
+   - Starts if missing via `nohup`
+   - Works on Linux/non-launchd systems
+
+Manual control:
+```bash
+ton serve            # Start server (if not running)
+ton serve status     # Check server status
+ton serve stop       # Stop the server
+```
+
+### Tool Compatibility
+
+| AI Tool | Integration | Status | How to Use |
+|---------|-------------|--------|-----------|
+| Claude Code | contextStorage hook + Stop | ✅ **Auto** | Configured in settings.json |
+| Gemini CLI | Config file | ⚠️ Config-dependent | `~/.config/gemini-cli/toon-config.json` |
+| agy | Config file | ⚠️ Config-dependent | `~/.antigravity/toon.toml` |
+| Ollama | Manual wrapper | 🔧 Manual | `curl localhost:7878/context \| ollama run` |
+| Any LLM API | HTTP GET | ✅ **Universal** | `curl http://localhost:7878/context` |
+| Custom scripts | HTTP GET | ✅ **Universal** | Fetch decompressed context |
+
+For Gemini, agy, and Ollama, the configs point to the context server but depend on those tools implementing support for the URLs.
+
 ## Token Savings
 
 ```

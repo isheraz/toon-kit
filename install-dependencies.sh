@@ -251,11 +251,36 @@ Options:
       case 'toon-to-json':
         result = JSON.stringify(TOONConverter.toonToJson(input), null, 2);
         break;
-      case 'md-to-toon':
-        const jsonMatch = input.match(/```json\n([\s\S]*?)\n```/);
-        const mdJson = jsonMatch ? JSON.parse(jsonMatch[1]) : JSON.parse(input);
-        result = TOONConverter.jsonToToon(mdJson);
+      case 'md-to-toon': {
+        // Case 1: JSON code block
+        const jsonMatch = input.match(/\`\`\`json\n([\s\S]*?)\n\`\`\`/);
+        if (jsonMatch) {
+          result = TOONConverter.jsonToToon(JSON.parse(jsonMatch[1]));
+          break;
+        }
+        // Case 2: YAML frontmatter (--- blocks)
+        const fmMatch = input.match(/^---\n([\s\S]*?)\n---/);
+        if (fmMatch) {
+          const fmLines = fmMatch[1].split('\n');
+          const obj = {};
+          fmLines.forEach(line => {
+            const idx = line.indexOf(':');
+            if (idx > -1) {
+              const k = line.slice(0, idx).trim();
+              const v = line.slice(idx + 1).trim();
+              if (k && v) obj[k] = v;
+            }
+          });
+          // Append body content as 'content' field
+          const body = input.slice(fmMatch[0].length).trim();
+          if (body) obj.content = body.replace(/\n/g, ' ').slice(0, 500);
+          result = TOONConverter.jsonToToon(obj);
+          break;
+        }
+        // Case 3: Plain markdown — treat as content string
+        result = 'content: ' + input.replace(/\n/g, ' ').slice(0, 500);
         break;
+      }
       case 'inline':
         const inlineJson = JSON.parse(input);
         result = TOONConverter.jsonToToon(inlineJson);

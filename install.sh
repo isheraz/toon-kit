@@ -81,6 +81,9 @@ full_install() {
   # Shell integration
   setup_shell_integration "$silent"
 
+  # Register launchd auto-start (macOS)
+  register_launchd "$silent"
+
   if [ "$silent" = true ]; then
     echo "tonpack: installed and configured. Reload your shell: exec zsh"
   else
@@ -166,6 +169,56 @@ source "$HOME/.claude/toon-setup/shell-integration.sh" 2>/dev/null || true
 RCEOF
 
   [ "$silent" = false ] && echo -e "${GREEN}✓ Integrated into $shell_rc${NC}"
+}
+
+# ============================================================================
+# Register launchd for auto-start (macOS)
+# ============================================================================
+
+register_launchd() {
+  local silent="${1:-false}"
+  local plist="$HOME/Library/LaunchAgents/com.tonpack.serve.plist"
+  local node_path
+
+  # Find node binary
+  node_path=$(which node 2>/dev/null) || {
+    [ "$silent" = false ] && echo -e "${YELLOW}⚠ node not found — skipping auto-start${NC}"
+    return 0
+  }
+
+  # Write launchd plist
+  mkdir -p "$HOME/Library/LaunchAgents"
+  cat > "$plist" << PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.tonpack.serve</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>${node_path}</string>
+    <string>${TOON_SETUP_DIR}/toon-serve.js</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>/tmp/ton-serve.log</string>
+  <key>StandardErrorPath</key><string>/tmp/ton-serve.err</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key><string>${HOME}</string>
+    <key>TOON_SERVE_PORT</key><string>7878</string>
+  </dict>
+</dict>
+</plist>
+PLIST
+
+  # Load plist
+  launchctl unload "$plist" 2>/dev/null || true
+  launchctl load "$plist" 2>/dev/null && {
+    [ "$silent" = false ] && echo -e "${GREEN}✓ Auto-start registered (launchd)${NC}"
+  } || {
+    [ "$silent" = false ] && echo -e "${YELLOW}⚠ launchctl failed — fallback to shell startup${NC}"
+  }
 }
 
 # ============================================================================

@@ -22,3 +22,17 @@ export TOON_SETUP_DIR
 export TOON_SKILLS_DIR
 export PATH="$TOON_SETUP_DIR:$PATH"
 
+# ============================================================================
+# Lazy-start ton serve if not running (fallback for non-launchd systems)
+# ============================================================================
+
+_ton_ensure_serve() {
+  # Check if server is already running
+  curl -sf "http://127.0.0.1:${TOON_SERVE_PORT:-7878}/health" > /dev/null 2>&1 && return 0
+  # Start server in background if not running
+  nohup node "$TOON_SETUP_DIR/toon-serve.js" > /dev/null 2>&1 &
+  disown
+}
+
+# Run silently on shell init
+_ton_ensure_serve 2>/dev/null || true

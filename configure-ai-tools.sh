@@ -82,6 +82,8 @@ cat > "$GEMINI_CONFIG_DIR/toon-config.json" << 'EOF'
 {
   "contextFormat": "toon",
   "contextPath": "/Users/sheraz/.claude/toon-context",
+  "contextServerUrl": "http://localhost:7878/context",
+  "contextServerHealth": "http://localhost:7878/health",
   "hooks": {
     "beforeToolUse": "rtk hook gemini",
     "afterContextSave": "toon-converter md-to-toon"
@@ -107,6 +109,8 @@ cat > "$AGY_CONFIG_DIR/toon.toml" << 'EOF'
 [context]
 format = "toon"
 path = "/Users/sheraz/.claude/toon-context"
+server_url = "http://localhost:7878/context"
+health_url = "http://localhost:7878/health"
 auto_compress = true
 
 [serialization]
@@ -132,6 +136,8 @@ cat > "$OLLAMA_CONFIG_DIR/toon-context.json" << 'EOF'
 {
   "contextFormat": "toon",
   "contextStoragePath": "/Users/sheraz/.claude/toon-context",
+  "contextServerUrl": "http://localhost:7878/context",
+  "contextServerHealth": "http://localhost:7878/health",
   "serialization": {
     "encoder": "toon",
     "decoder": "toon-to-json"
@@ -144,6 +150,8 @@ cat > "$OLLAMA_CONFIG_DIR/toon-context.json" << 'EOF'
 EOF
 
 echo -e "${GREEN}✓ Ollama configured for TOON context${NC}"
+echo -e "${YELLOW}Note:${NC} To inject TOON context into Ollama prompts, use:"
+echo -e "  ${D}curl -s http://localhost:7878/context | jq -r 'to_entries[].value.content' | ollama run <model>${NC}"
 
 # ============================================================================
 # 5. Create Global Memory Conversion Service
@@ -169,7 +177,10 @@ _convert_file() {
 
   command -v node &> /dev/null && [ -f "$CONVERTER" ] || return 1
   original_size=$(wc -c < "$md_file" | tr -d ' ')
-  node "$CONVERTER" md-to-toon "$md_file" -o "$toon_file" 2>/dev/null || return 0
+  node "$CONVERTER" md-to-toon "$md_file" -o "$toon_file" 2>>"$TOON_CONTEXT_DIR/errors.log" || {
+    echo "$(date +%s)|ERROR|$md_file" >> "$TOON_CONTEXT_DIR/savings.log"
+    return 0
+  }
   toon_size=$(wc -c < "$toon_file" | tr -d ' ')
   echo "$(date +%s)|$original_size|$toon_size|${label}__${filename}" >> "$TOON_CONTEXT_DIR/savings.log"
   echo -e "  ${G}✓${NC} $filename.md ${D}→${NC} ${toon_size}B ${D}(saved $((original_size - toon_size))B)${NC}"
